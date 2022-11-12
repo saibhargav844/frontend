@@ -1,0 +1,65 @@
+"@angular/cdk": "^8.2.3",
+
+
+&lt;div class="col-md-6" style="overflow-y: auto;"&gt;
+    &lt;div class="drop" [style.border-width.px]="imagens.length &gt; 0 ? 0: 3"&gt;
+        &lt;div class="abc" cdkDropList #dropList="cdkDropList" cdkDropListOrientation="horizontal"
+            [cdkDropListData]="imagens" 
+            [cdkDropListConnectedTo]="[dragList]" 
+            (cdkDropListDropped)="drop($event)"&gt;
+            &lt;ngb-carousel data-interval="false" style="outline: none;" id="carousel" #carousel *ngIf="imagens"
+                (slide)="change($event)"&gt;
+                &lt;ng-template *ngFor="let imgIdx of imagens; let i = index" [id]="i" ngbSlide&gt;
+                    &lt;div class="picsum-img-wrapper" cdkDrag [cdkDragDisabled]="true"&gt;
+                        &lt;img [src]="imgIdx.Imagem" style="border-radius: 8px;" class="img-responsive Images"&gt;
+                      &lt;/div&gt;
+                &lt;/ng-template&gt;
+            &lt;/ngb-carousel&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;div class="row" cdkDropList #dragList="cdkDropList" cdkDropListOrientation="horizontal"
+        [cdkDropListData]="imagens2" 
+        [cdkDropListConnectedTo]="[dropList]" 
+        (cdkDropListDropped)="drop($event)"&gt;
+        &lt;div class="Upcard" *ngFor="let imgIdx of imagens2" cdkDrag&gt;
+            &lt;img class="img-responsive" [src]="imgIdx.Imagem" style="width: 100%; height: 100%"&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+
+
+  drop(event: CdkDragDrop&lt;string[]&gt;) {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      transferArrayItem(event.previousContainer.data,
+                        event.container.data,
+                        event.previousIndex,
+                        event.currentIndex);
+    }
+  }
+
+
+  drop(event: CdkDragDrop&lt;string[]&gt;) {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex
+      );
+    } else {
+      const imagen = { ...(event.container.data[event.currentIndex] as any) };
+      const previousImagen = {
+        ...(event.previousContainer.data[event.previousIndex] as any)
+      };
+      event.container.data.splice(event.currentIndex, 1, previousImagen);
+      event.previousContainer.data.splice(event.previousIndex, 1, imagen);
+    }
+  }
+
+
+  imagens2 = this.imagens.map(x =&gt; ({ ...x }));
+
+
+
